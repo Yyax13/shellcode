@@ -1,3 +1,4 @@
+; Open the /bin/sh
 section .text
 global _start
 
