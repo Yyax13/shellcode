@@ -1,3 +1,5 @@
 shellcode
 test
 .vscode
+reverse.*
+shell.*
