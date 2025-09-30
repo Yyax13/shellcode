@@ -1,5 +1,5 @@
 ; Open the /bin/sh
-section .text
+BITS 64
 global _start
 
 _start:
